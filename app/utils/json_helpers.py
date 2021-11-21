@@ -24,13 +24,13 @@ class CustomEncoder(JSONEncoder):
 class CustomDecoder(JSONDecoder):
     def __init__(self,
                  *,
-                 parse_float: t.Callable[[str], t.Any] | None = None,
-                 parse_int: t.Callable[[str], t.Any] | None = None,
-                 parse_constant: t.Callable[[str], t.Any] | None = None,
+                 parse_float: t.Callable[[str], t.Any] = None,
+                 parse_int: t.Callable[[str], t.Any] = None,
+                 parse_constant: t.Callable[[str], t.Any] = None,
                  strict: bool = None,
                  object_pairs_hook: t.Callable[[
-                     list[tuple[str, t.Any]]], t.Any] | None = None,
-                 object_hook: t.Callable[[(dict[str, t.Any])], t.Any] | None = None) -> None:
+                     list[tuple[str, t.Any]]], t.Any] = None,
+                 object_hook: t.Callable[[(dict[str, t.Any])], t.Any] = None) -> None:
         self.old_hook = object_hook
         super().__init__(object_hook=self.object_hook,
                          parse_float=parse_float,
