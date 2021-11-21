@@ -63,13 +63,18 @@ async def writeJSONData(item) -> bool:
         drone_type_list: List[DroneTypes] = list()
         pilot_id_list: List[int] = list(map(lambda item: item.id,
                                             await Pilots.all(
-                                                projection_model=BaseIdModel).to_list()))
+                                                projection_model=BaseIdModel).to_list())
+                                        if await Pilots.count() > 0 else [])
         drone_type_id_list: List[int] = list(map(lambda item: item.id,
                                                  await DroneTypes.all(
-                                                     projection_model=BaseIdModel).to_list()))
+                                                     projection_model=BaseIdModel).to_list())
+                                             if await DroneTypes.count() > 0 else []
+                                             )
         drone_reg_id_list: List[int] = list(map(lambda item: item.reg_id,
                                                 await Drones.all(
-                                                    projection_model=BaseRegIdModel).to_list()))
+                                                    projection_model=BaseRegIdModel).to_list())
+                                            if await Drones.count() > 0 else []
+                                            )
         for object in item:
 
             if not object.reg_id in drone_reg_id_list:
