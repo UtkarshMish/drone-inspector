@@ -18,6 +18,8 @@ class CustomEncoder(JSONEncoder):
             return str(o)
         elif isinstance(o, BaseModel):
             return o.dict(exclude={"_id", "revision_id"})
+        elif isinstance(o, set):
+            return dict(o)
         return super().default(o)
 
 
