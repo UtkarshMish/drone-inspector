@@ -8,6 +8,7 @@ from app.database import Drones, init_DB
 from app.database.DroneTypes import DroneTypes
 from app.database.Drones import DroneObject
 from app.database.Pilots import Pilots
+from app.database.util import BaseIdModel, BaseRegIdModel
 from app.utils import CustomDecoder
 
 api_route = Blueprint("api", __name__, url_prefix="/api")
@@ -60,20 +61,15 @@ async def writeJSONData(item) -> bool:
         drone_list: List[Drones] = list()
         pilot_list: List[Pilots] = list()
         drone_type_list: List[DroneTypes] = list()
-        pilot_id_list: List[int] = list(map(lambda item: item.get("_id"),
+        pilot_id_list: List[int] = list(map(lambda item: item.id,
                                             await Pilots.all(
-                                                projection_model={"_id": True
-                                                                  }).to_list()))
-        drone_type_id_list: List[int] = list(map(lambda item: item.get("_id"),
+                                                projection_model=BaseIdModel).to_list()))
+        drone_type_id_list: List[int] = list(map(lambda item: item.id,
                                                  await DroneTypes.all(
-                                                     projection_model={
-                                                         "_id": True
-                                                     }).to_list()))
-        drone_reg_id_list: List[int] = list(map(lambda item: item.get("reg_id"),
+                                                     projection_model=BaseIdModel).to_list()))
+        drone_reg_id_list: List[int] = list(map(lambda item: item.reg_id,
                                                 await Drones.all(
-                                                    projection_model={
-                                                        "reg_id": True
-                                                    }).to_list()))
+                                                    projection_model=BaseRegIdModel).to_list()))
         for object in item:
 
             if not object.reg_id in drone_reg_id_list:
