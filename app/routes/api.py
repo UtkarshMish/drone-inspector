@@ -1,3 +1,4 @@
+from ast import comprehension
 from json import loads
 from math import ceil
 from typing import List
@@ -43,7 +44,7 @@ async def set_drone_details():
 
 
 def check_if_droneObject(item) -> bool:
-    return isinstance(item, list) and all(map(lambda element: isinstance(element, DroneObject), item))
+    return isinstance(item, list) and all(comprehension(lambda element: isinstance(element, DroneObject), item))
 
 
 async def writeJSONData(item) -> bool:

@@ -1,11 +1,12 @@
-import './App.css';
-import Layout from './components/Layout/Layout'
+import { Box } from "@chakra-ui/react";
+import "./App.css";
+import Layout from "./components/Layout/Layout";
 
 function App() {
   return (
-    <div className="App">
+    <Box className="App" maxH={"100vh"} overflow={"auto"}>
       <Layout />
-    </div>
+    </Box>
   );
 }
 

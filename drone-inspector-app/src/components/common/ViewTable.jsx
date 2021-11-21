@@ -2,6 +2,7 @@ import { Box, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getDroneInfo } from "../../utils/droneInfo";
+import { Spinner } from "@chakra-ui/spinner";
 import PageBox from "./PageBox";
 
 export default function ViewTable() {
@@ -25,8 +26,8 @@ export default function ViewTable() {
   }, [page]);
   return droneData && Array.isArray(droneData) ? (
     <Box display={"flex"} flexDirection={"column"}>
-      <Table>
-        <Thead>
+      <Table variant="striped" colorScheme="cyan">
+        <Thead bgColor={"cyan"}>
           <Tr>
             {columns &&
               Array.isArray(columns) &&
@@ -39,13 +40,26 @@ export default function ViewTable() {
               <Tr key={keyValue}>
                 {columns &&
                   Array.isArray(columns) &&
-                  columns.map((val, inx) =>
-                    typeof item[val] == "object" ? (
-                      <ListValues item={item[val]} />
-                    ) : (
-                      <Td key={inx}>{item[val]}</Td>
-                    )
-                  )}
+                  columns.map((val, inx) => (
+                    <Td>
+                      <Box
+                        width="12rem"
+                        height="6rem"
+                        overflow="auto"
+                        key={inx}
+                      >
+                        {typeof item[val] === "object" ? (
+                          <ListValues item={item[val]} />
+                        ) : ["phone", "_id", "reg_id"].includes(
+                            val.toLowerCase()
+                          ) || isNaN(parseFloat(item[val])) ? (
+                          item[val]
+                        ) : (
+                          parseFloat(item[val]).toFixed(2)
+                        )}
+                      </Box>
+                    </Td>
+                  ))}
               </Tr>
             );
           })}
@@ -53,7 +67,9 @@ export default function ViewTable() {
       </Table>
       <PageBox totalPage={totalPageCount} />
     </Box>
-  ) : null;
+  ) : (
+    <Spinner size="lg" thickness="4px" speed="0.65s" />
+  );
 }
 
 function ListValues({ item }) {
@@ -69,8 +85,15 @@ function ListValues({ item }) {
             marginBlock: "10px",
           }}
         >
-          <Text fontWeight={"bold"}>{key}</Text>
-          <Text>{value}</Text>
+          <Text fontWeight={"bold"} maxWidth={"50%"}>
+            {key}
+          </Text>
+          <Text maxWidth={"50%"}>
+            {["phone", "_id", "address"].includes(key.toLowerCase()) ||
+            isNaN(parseFloat(value))
+              ? value
+              : parseFloat(value).toFixed(2)}
+          </Text>
         </li>
       ))}
     </ul>
