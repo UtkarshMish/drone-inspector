@@ -32,7 +32,13 @@ async def get_pilot():
             if isWritten:
                 return {"success": True}
         except BulkWriteError as BulkErr:
-            return {"success": False, "error": BulkErr.details}
+            error_message: str = str()
+            code_num: int = BulkErr.code
+            if code_num == 11000:
+                error_message = "duplicate key error"
+            else:
+                error_message = BulkErr.details.get("writeErrors")[0]["errmsg"]
+            return {"success": False, "error": error_message}
     return {"success": False}
 
 
@@ -44,8 +50,15 @@ async def set_drone_details():
         isWritten = await writeJSONData(item)
         if isWritten:
             return {"success": True}
+
     except BulkWriteError as BulkErr:
-        return {"success": False, "error": BulkErr.details}
+        error_message: str = str()
+        code_num: int = BulkErr.code
+        if code_num == 11000:
+            error_message = "duplicate key error"
+        else:
+            error_message = BulkErr.details.get("writeErrors")[0]["errmsg"]
+        return {"success": False, "error": error_message}
     return {"success": False}
 
 
