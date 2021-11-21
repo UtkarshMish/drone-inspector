@@ -32,7 +32,7 @@ async def get_pilot():
             if isWritten:
                 return {"success": True}
         except BulkWriteError as BulkErr:
-            return {"success": False, "error": BulkErr._error_labels}
+            return {"success": False, "error": BulkErr.details}
     return {"success": False}
 
 
@@ -45,7 +45,7 @@ async def set_drone_details():
         if isWritten:
             return {"success": True}
     except BulkWriteError as BulkErr:
-        return {"success": False, "error": BulkErr._error_labels}
+        return {"success": False, "error": BulkErr.details}
     return {"success": False}
 
 
