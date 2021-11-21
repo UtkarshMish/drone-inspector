@@ -27,9 +27,12 @@ async def get_pilot():
     file = request.files.get("json_file")
     if file:
         json_item = loads(file.stream.read().decode("utf8"), cls=CustomDecoder)
-        isWritten = await writeJSONData(json_item)
-        if isWritten:
-            return {"success": True}
+        try:
+            isWritten = await writeJSONData(json_item)
+            if isWritten:
+                return {"success": True}
+        except BulkWriteError as BulkErr:
+            return {"success": False, "error": BulkErr._error_labels}
     return {"success": False}
 
 
