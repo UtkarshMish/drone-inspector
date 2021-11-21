@@ -1,1 +1,1 @@
-web: gunicorn --host 0.0.0.0 --port $PORT "app:create_app()"
+web: gunicorn  --workers=2 --bind 0.0.0.0:$(PORT) "app:create_app()"
