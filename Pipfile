@@ -12,6 +12,7 @@ python-dotenv = "*"
 pydantic = "*"
 beanie = "*"
 gunicorn = "*"
+pymongo = {extras = ["srv"], version = "*"}
 
 [dev-packages]
 autopep8 = "*"
