@@ -41,13 +41,8 @@ export default function ViewTable() {
                 {columns &&
                   Array.isArray(columns) &&
                   columns.map((val, inx) => (
-                    <Td>
-                      <Box
-                        width="12rem"
-                        height="6rem"
-                        overflow="auto"
-                        key={inx}
-                      >
+                    <Td key={inx}>
+                      <Box width="12rem" height="6rem" overflow="auto">
                         {typeof item[val] === "object" ? (
                           <ListValues item={item[val]} />
                         ) : ["phone", "_id", "reg_id"].includes(
@@ -65,7 +60,7 @@ export default function ViewTable() {
           })}
         </Tbody>
       </Table>
-      <PageBox totalPage={totalPageCount} />
+      <PageBox totalPage={totalPageCount} currentNum={parseInt(page)} />
     </Box>
   ) : (
     <Spinner size="lg" thickness="4px" speed="0.65s" />

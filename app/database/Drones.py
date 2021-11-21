@@ -25,6 +25,40 @@ class DroneModel(BaseModel):
     total_flight_time_min: int = Field(...)
 
 
+class DroneObject():
+
+    drone_type: DroneTypes
+    pilot: Pilots
+    reg_id: int
+    drone_name: str
+    location: Location
+    last_seen: datetime
+    first_launch: datetime
+    total_flight_time_min: int
+
+    def __init__(self,
+                 drone_name: str,
+                 location: Location,
+                 last_seen: datetime,
+                 first_launch: datetime,
+                 total_flight_time_min: int,
+                 reg_id: int, drone_type: DroneTypes, pilot: Pilots):
+        self.drone_name = drone_name
+        self.location = location
+        self.last_seen = last_seen
+        self.first_launch = first_launch
+        self.total_flight_time_min = total_flight_time_min
+        self.reg_id = reg_id
+        self.drone_type = drone_type
+        self.pilot = pilot
+
+    def dict(self):
+        return self.__dict__
+
+    def __str__(self) -> str:
+        return str(self.dict())
+
+
 class Drones(SafeDocument, DroneModel):
     id: PydanticObjectId = Field(default_factory=PydanticObjectId)
     reg_id: int = Field(...)
@@ -73,40 +107,6 @@ class Drones(SafeDocument, DroneModel):
                     "foreignField": "_id",
                     "as": "drone_type"
                 }
-            }, {"$unwind": "$pilot"}, {"$unwind": "$drone_type"}
+            }, {"$unwind": "$pilot"}, {"$unwind": "$drone_type"}, {"$unset": ["_id", "pilot._id", "drone_type._id"]}
 
         ]).to_list()
-
-
-class DroneObject():
-
-    drone_type: DroneTypes
-    pilot: Pilots
-    reg_id: int = Field(...)
-    drone_name: str = Field(...)
-    location: Location = Field(...)
-    last_seen: datetime = Field(default_factory=datetime.now)
-    first_launch: datetime = Field(...)
-    total_flight_time_min: int = Field(...)
-
-    def __init__(self,
-                 drone_name: str,
-                 location: Location,
-                 last_seen: datetime,
-                 first_launch: datetime,
-                 total_flight_time_min: int,
-                 reg_id: int, drone_type: DroneTypes, pilot: Pilots):
-        self.drone_name = drone_name
-        self.location = location
-        self.last_seen = last_seen
-        self.first_launch = first_launch
-        self.total_flight_time_min = total_flight_time_min
-        self.reg_id = reg_id
-        self.drone_type = drone_type
-        self.pilot = pilot
-
-    def dict(self):
-        return self.__dict__
-
-    def __str__(self) -> str:
-        return str(self.dict())
