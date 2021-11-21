@@ -18,19 +18,20 @@ export default function ViewTable() {
         setTotalPageCount(pages);
         if (data.length > 1) {
           setColumns(Object.keys(data[0]));
+        } else {
+          setColumns([]);
         }
       }
     }
 
     return setDroneFromAPI();
   }, [page]);
-  return droneData && Array.isArray(droneData) ? (
+  return Array.isArray(droneData) ? (
     <Box display={"flex"} flexDirection={"column"}>
       <Table variant="striped" colorScheme="cyan">
         <Thead bgColor={"cyan"}>
           <Tr>
-            {columns &&
-              Array.isArray(columns) &&
+            {Array.isArray(columns) &&
               columns.map((item, key) => <Th key={key}>{item}</Th>)}
           </Tr>
         </Thead>
@@ -38,8 +39,7 @@ export default function ViewTable() {
           {droneData.map((item, keyValue) => {
             return (
               <Tr key={keyValue}>
-                {columns &&
-                  Array.isArray(columns) &&
+                {Array.isArray(columns) &&
                   columns.map((val, inx) => (
                     <Td key={inx}>
                       <Box width="12rem" height="6rem" overflow="auto">

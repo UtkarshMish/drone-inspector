@@ -44,7 +44,7 @@ async def set_drone_details():
 
 
 def check_if_droneObject(item) -> bool:
-    return isinstance(item, list) and all(comprehension(lambda element: isinstance(element, DroneObject), item))
+    return isinstance(item, list) and all([isinstance(element, DroneObject) for element in item])
 
 
 async def writeJSONData(item) -> bool:
