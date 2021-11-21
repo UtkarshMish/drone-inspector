@@ -33,7 +33,7 @@ async def get_pilot():
             if isWritten:
                 return {"success": True}
         except BulkWriteError as BulkErr:
-            return {"success": False, "error": BulkErr.code}
+            return {"success": False, "error": BulkErr.details}
     return {"success": False}
 
 
@@ -47,7 +47,7 @@ async def set_drone_details():
             return {"success": True}
 
     except BulkWriteError as BulkErr:
-        return {"success": False, "error": BulkErr.code}
+        return {"success": False, "error": BulkErr.details}
     return {"success": False}
 
 
@@ -61,23 +61,19 @@ async def writeJSONData(item) -> bool:
         drone_list: List[Drones] = list()
         pilot_list: List[Pilots] = list()
         drone_type_list: List[DroneTypes] = list()
-        pilot_id_list: List[int] = list(map(lambda item: item.id,
-                                            await Pilots.all(
-                                                projection_model=BaseIdModel).to_list())
-                                        if await Pilots.count() > 0 else [])
-        drone_type_id_list: List[int] = list(map(lambda item: item.id,
-                                                 await DroneTypes.all(
-                                                     projection_model=BaseIdModel).to_list())
-                                             if await DroneTypes.count() > 0 else []
-                                             )
-        drone_reg_id_list: List[int] = list(map(lambda item: item.reg_id,
-                                                await Drones.all(
-                                                    projection_model=BaseRegIdModel).to_list())
-                                            if await Drones.count() > 0 else []
-                                            )
+        pilot_id_list: List[int] = list([item.id for item in
+                                         await Pilots.all(
+                                             projection_model=BaseIdModel).to_list()])
+        drone_type_id_list: List[int] = list(item.id for item in
+                                             await DroneTypes.all(
+                                                 projection_model=BaseIdModel).to_list())
+
+        drone_reg_id_list: List[int] = list([item.reg_id for item in
+                                             await Drones.all(
+                                                 projection_model=BaseRegIdModel).to_list()])
         for object in item:
 
-            if not object.reg_id in drone_reg_id_list:
+            if not (object.reg_id in drone_reg_id_list):
                 drone_list.append(
                     Drones(
                         object.drone_name,
@@ -85,15 +81,17 @@ async def writeJSONData(item) -> bool:
                         object.first_launch, object.total_flight_time_min,
                         object.reg_id, object.drone_type.id, object.pilot.id)
                 )
+                drone_reg_id_list.append(object.reg_id)
+
             if not object.pilot.id in pilot_id_list:
                 pilot_list.append(object.pilot)
                 pilot_id_list.append(object.pilot.id)
 
-            if not object.drone_type.id in drone_type_id_list:
+            if not (object.drone_type.id in drone_type_id_list):
                 drone_type_list.append(object.drone_type)
                 drone_type_id_list.append(object.drone_type.id)
 
-            await DroneTypes.insert_many(drone_type_list)
-            await Pilots.insert_many(pilot_list)
-            await Drones.insert_many(drone_list)
+        len(drone_type_list) > 0 and await DroneTypes.insert_many(drone_type_list)
+        len(pilot_list) > 0 and await Pilots.insert_many(pilot_list)
+        len(drone_list) > 0 and await Drones.insert_many(drone_list)
     return isDocument

@@ -1,6 +1,6 @@
 
 from beanie import Document
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SafeDocument(Document):
@@ -11,7 +11,7 @@ class SafeDocument(Document):
 
 
 class BaseIdModel(BaseModel):
-    id: int
+    id: int = Field(alias="_id")
 
 
 class BaseRegIdModel(BaseModel):
