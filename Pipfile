@@ -13,6 +13,7 @@ pydantic = "*"
 beanie = "*"
 gunicorn = "*"
 pymongo = {extras = ["srv"], version = "*"}
+dnspython = "*"
 
 [dev-packages]
 autopep8 = "*"
