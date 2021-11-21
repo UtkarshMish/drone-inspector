@@ -8,7 +8,7 @@ import PageBox from "./PageBox";
 export default function ViewTable() {
   const [droneData, setDroneData] = useState(null);
   const [columns, setColumns] = useState(null);
-  const { page } = useParams() || { page: 1 };
+  const page = parseInt(useParams().page || 1);
   const [totalPageCount, setTotalPageCount] = useState(1);
   useEffect(() => {
     async function setDroneFromAPI() {
@@ -63,7 +63,9 @@ export default function ViewTable() {
       <PageBox totalPage={totalPageCount} currentNum={parseInt(page)} />
     </Box>
   ) : (
-    <Spinner size="lg" thickness="4px" speed="0.65s" />
+    <Box width={"inherit"}>
+      <Spinner size="lg" thickness="4px" speed="0.65s" />
+    </Box>
   );
 }
 
