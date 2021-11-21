@@ -1,0 +1,7 @@
+.dccache
+.env
+.vscode
+drone-inspector-app/build/**
+drone-inspector-app/node_modules/**/*
+drone-inspector-app/.vscode
+__pycache__/

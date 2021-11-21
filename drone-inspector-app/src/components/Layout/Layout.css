@@ -1,0 +1,10 @@
+.layout__content_cont {
+    text-align: left;
+    float: left;
+    width: 40%;
+}
+
+.layout__map_cont {
+    float: right;
+    width: 60%;
+}
