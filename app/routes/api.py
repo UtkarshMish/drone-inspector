@@ -32,13 +32,7 @@ async def get_pilot():
             if isWritten:
                 return {"success": True}
         except BulkWriteError as BulkErr:
-            error_message: str = str()
-            code_num: int = BulkErr.code
-            if code_num == 11000:
-                error_message = "duplicate key error"
-            else:
-                error_message = BulkErr.details.get("writeErrors")[0]["errmsg"]
-            return {"success": False, "error": error_message}
+            return {"success": False, "error": BulkErr.code}
     return {"success": False}
 
 
@@ -52,13 +46,7 @@ async def set_drone_details():
             return {"success": True}
 
     except BulkWriteError as BulkErr:
-        error_message: str = str()
-        code_num: int = BulkErr.code
-        if code_num == 11000:
-            error_message = "duplicate key error"
-        else:
-            error_message = BulkErr.details.get("writeErrors")[0]["errmsg"]
-        return {"success": False, "error": error_message}
+        return {"success": False, "error": BulkErr.code}
     return {"success": False}
 
 
@@ -72,16 +60,30 @@ async def writeJSONData(item) -> bool:
         drone_list: List[Drones] = list()
         pilot_list: List[Pilots] = list()
         drone_type_list: List[DroneTypes] = list()
-        pilot_id_list: List[int] = list()
-        drone_type_id_list: List[int] = list()
+        pilot_id_list: List[int] = list(map(lambda item: item.get("_id"),
+                                            await Pilots.all(
+                                                projection_model={"_id": True
+                                                                  }).to_list()))
+        drone_type_id_list: List[int] = list(map(lambda item: item.get("_id"),
+                                                 await DroneTypes.all(
+                                                     projection_model={
+                                                         "_id": True
+                                                     }).to_list()))
+        drone_reg_id_list: List[int] = list(map(lambda item: item.get("reg_id"),
+                                                await Drones.all(
+                                                    projection_model={
+                                                        "reg_id": True
+                                                    }).to_list()))
         for object in item:
-            drone_list.append(
-                Drones(
-                    object.drone_name,
-                    object.location, object.last_seen,
-                    object.first_launch, object.total_flight_time_min,
-                    object.reg_id, object.drone_type.id, object.pilot.id)
-            )
+
+            if not object.reg_id in drone_reg_id_list:
+                drone_list.append(
+                    Drones(
+                        object.drone_name,
+                        object.location, object.last_seen,
+                        object.first_launch, object.total_flight_time_min,
+                        object.reg_id, object.drone_type.id, object.pilot.id)
+                )
             if not object.pilot.id in pilot_id_list:
                 pilot_list.append(object.pilot)
                 pilot_id_list.append(object.pilot.id)
