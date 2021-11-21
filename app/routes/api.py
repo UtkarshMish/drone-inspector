@@ -1,4 +1,4 @@
-from ast import comprehension
+from pymongo.errors import BulkWriteError
 from json import loads
 from math import ceil
 from typing import List
@@ -37,9 +37,12 @@ async def get_pilot():
 async def set_drone_details():
     await init_DB()
     item: List[DroneObject] = request.get_json()
-    isWritten = await writeJSONData(item)
-    if isWritten:
-        return {"success": True}
+    try:
+        isWritten = await writeJSONData(item)
+        if isWritten:
+            return {"success": True}
+    except BulkWriteError as BulkErr:
+        return {"success": False, "error": BulkErr._error_labels}
     return {"success": False}
 
 
@@ -71,7 +74,7 @@ async def writeJSONData(item) -> bool:
                 drone_type_list.append(object.drone_type)
                 drone_type_id_list.append(object.drone_type.id)
 
-        await DroneTypes.insert_many(drone_type_list)
-        await Pilots.insert_many(pilot_list)
-        await Drones.insert_many(drone_list)
+            await DroneTypes.insert_many(drone_type_list)
+            await Pilots.insert_many(pilot_list)
+            await Drones.insert_many(drone_list)
     return isDocument
