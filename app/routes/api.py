@@ -1,5 +1,5 @@
 from pymongo.errors import BulkWriteError
-from json import loads
+from json import JSONDecodeError, loads
 from math import ceil
 from typing import List
 from flask import Blueprint, request
@@ -27,27 +27,32 @@ async def get_pilot():
     await init_DB()
     file = request.files.get("json_file")
     if file:
-        json_item = loads(file.stream.read().decode("utf8"), cls=CustomDecoder)
         try:
+            json_item = loads(file.stream.read().decode(
+                "utf8"), cls=CustomDecoder)
             isWritten = await writeJSONData(json_item)
             if isWritten:
                 return {"success": True}
         except BulkWriteError as BulkErr:
             return {"success": False, "error": BulkErr.details}
+        except JSONDecodeError as dcError:
+            return {"success": False, "error": dcError.msg}
     return {"success": False}
 
 
 @api_route.post("/drones")
 async def set_drone_details():
     await init_DB()
-    item: List[DroneObject] = request.get_json()
     try:
+        item: List[DroneObject] = request.get_json()
         isWritten = await writeJSONData(item)
         if isWritten:
             return {"success": True}
 
     except BulkWriteError as BulkErr:
         return {"success": False, "error": BulkErr.details}
+    except JSONDecodeError as dcError:
+        return {"success": False, "error": dcError.msg}
     return {"success": False}
 
 
