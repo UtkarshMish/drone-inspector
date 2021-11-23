@@ -37,6 +37,8 @@ async def get_pilot():
             return {"success": False, "error": BulkErr.details}
         except JSONDecodeError as dcError:
             return {"success": False, "error": dcError.msg}
+        except Exception as x:
+            return {"success": False, "error": x.args}
     return {"success": False}
 
 

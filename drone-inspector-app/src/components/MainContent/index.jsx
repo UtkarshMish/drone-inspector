@@ -9,7 +9,7 @@ export default function MainContent() {
   return (
     <Box width={"50%"} maxH={"inherit"}>
       <Navbar />
-      <Box maxHeight="92vh" overflow={"auto"}>
+      <Box height="92vh" overflow={"auto"}>
         <Routes>
           <Route path="/view-data/" element={<ViewTable />} />
           <Route path="/view-data/:page" element={<ViewTable />} />
