@@ -63,7 +63,13 @@ export default function ViewTable() {
       <PageBox totalPage={totalPageCount} currentNum={parseInt(page)} />
     </Box>
   ) : (
-    <Box width={"inherit"}>
+    <Box
+      height={"inherit"}
+      width={"inherit"}
+      display={"flex"}
+      justifyContent={"center"}
+      alignItems={"center"}
+    >
       <Spinner size="lg" thickness="4px" speed="0.65s" />
     </Box>
   );
