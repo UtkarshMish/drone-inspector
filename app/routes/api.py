@@ -21,12 +21,11 @@ async def get_drones():
     await init_DB()
 
     date_time = request.args.get("date")
-    print(date_time)
 
     if date_time:
-
+        date_time = parse_datetime(date_time).replace(tzinfo=None)
         return {"drones": await Drones.findByFirstLaunch(
-            parse_datetime(date_time)
+            date_time
 
 
         )}
